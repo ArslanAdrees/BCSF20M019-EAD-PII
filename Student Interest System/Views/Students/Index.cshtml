@@ -1,0 +1,42 @@
+﻿@model List<Student_Interest_System.Models.Domain.Student>
+@{
+ 
+}
+
+
+<center><h1>Students List</h1></center>
+<table id="myTable" class="table table-bordered table-hover table-sm">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Roll Number</th>
+            <th>Department</th>
+            <th>Degree</th>
+            <th>DOB</th>
+            <th>City</th>
+            <th>Interest</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var student in Model)
+        {
+            <tr>
+                <td>@student.Id</td>
+                <td>@student.Name</td>
+                <td>@student.Rollno</td>
+                <td>@student.Department</td>
+                <td>@student.DegreeTitle</td>
+                <td>@student.DateOfBirth</td>
+                <td>@student.City</td>
+                <td>@student.Interest</td>
+                <td><a href="/Students/ViewStudent/@student.Id" class="btn btn-primary">View</a> | <a href="/Students/ViewStudent/@student.Id" class="btn btn-secondary">Update</a> | <a href="/Students/ViewStudent/@student.Id" class="btn btn-danger">Delete</a></td>
+               
+                
+            </tr>
+        }
+
+    </tbody>
+</table>
+

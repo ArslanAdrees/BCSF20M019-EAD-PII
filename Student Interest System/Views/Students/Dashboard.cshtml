@@ -1,0 +1,172 @@
+﻿@model List<Student_Interest_System.Models.Domain.Student>
+@{
+
+    List<string>? distinctInterestsList = Model.Select(obj => obj.Interest).Distinct().ToList();
+    int distinctInterestCount = distinctInterestsList.Count();
+    var top5Interests = Model
+            .GroupBy(obj => obj.Interest)
+            .OrderByDescending(group => group.Count())
+            .Select(group => group.Key)
+            .Take(5)
+            .ToList();
+    var bottom5Interests = Model
+    .GroupBy(obj => obj.Interest)
+    .OrderBy(group => group.Count())
+    .Select(group => group.Key)
+    .Take(5)
+    .ToList();
+
+    int maleCount = 0;
+    int femaleCount = 0;
+
+    // Iterate through the students and count males and females
+    foreach (var student in Model)
+    {
+        if (student.Gender == "Male")
+        {
+            maleCount++;
+        }
+        else if (student.Gender == "Female")
+        {
+            femaleCount++;
+        }
+    }
+
+    var cityStudentCounts = Model
+            .GroupBy(student => student.City)
+            .Select(group => new { City = group.Key, StudentCount = group.Count() })
+            .ToList();
+    List<string> cities = new List<string>();
+    List<int> cityCount = new List<int>();
+
+    foreach (var cityStudentCount in cityStudentCounts)
+    {
+        cities.Add(cityStudentCount.City);
+        cityCount.Add(cityStudentCount.StudentCount);
+    }
+
+    List<object> objOfCity = new List<object>();
+    objOfCity.Add(cities);
+    objOfCity.Add(cityCount);
+
+}
+
+
+
+
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Table for Top 5 Interests -->
+            <h5>Top 5 Interests</h5>
+            <table class="table table-bordered table-sm">
+                <thead class="thead-dark">
+                    <tr>
+                        @foreach (var topInterests in top5Interests)
+                        {
+                            <th scope="col" class="bg-success text-white"><center>@topInterests</center></th>
+                        }
+                    </tr>
+                </thead>
+            </table>
+
+            <!-- Table for Bottom 5 Interests -->
+            <h5>Bottom 5 Interests</h5>
+            <table class="table table-bordered table-sm">
+                <thead class="thead-dark">
+                    <tr>
+                        @foreach (var bottomInterests in bottom5Interests)
+                        {
+                            <th scope="col" class="bg-info text-white"><center>@bottomInterests</center></th>
+                        }
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Card for Distinct Interests -->
+            <div class="card bg-primary text-light" style="width: 17rem;">
+                <div class="card-body">
+                    <h3 class="card-title">Distinct Interests</h3>
+                    <center><h1 class="card-text">@distinctInterestCount</h1></center>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+       
+        <div>
+            <canvas id="myGenderPieChart"></canvas>
+        </div>
+        <h5>Gender Distribution</h5>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div>
+            <canvas id="myCityPieChart width="400" height="200""></canvas>
+        </div>
+        <h5>Provincial Distribution</h5>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript">
+        //1
+        $(function () {
+            var ctx = document.getElementById("myGenderPieChart").getContext('2d');
+            var myGenderPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ["Male", "Female"],
+                    datasets: [{
+                        backgroundColor: ["#32ecc7", "#3498db"],
+                        data: [@maleCount, @femaleCount]
+                    }]
+                }
+            });
+
+
+            var ctx = document.getElementById("myCityPieChart").getContext('2d');
+            var myCityPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: objOfCity[0],
+                    datasets: [{
+                        backgroundColor: getRandomColors(cityStudentCounts.length),
+                        data: objOfCity[1]
+                    }]
+                }
+            });
+
+            // Function to generate random colors
+            function getRandomColors(count) {
+                var colors = [];
+                for (var i = 0; i < count; i++) {
+                    var color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+                    colors.push(color);
+                }
+                return colors;
+            }
+
+        });
+
+
+    </script>
+
+
+}
+
+
